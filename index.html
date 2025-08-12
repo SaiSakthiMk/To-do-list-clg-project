@@ -1,0 +1,116 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="UTF-8">
+    <link rel="stylesheet" href="index.css">
+    <title>Simple Todo List</title>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/gsap.min.js"></script>
+  </head>
+
+  <body>
+    <h1 style="background-color: lightskyblue; border-radius: 8px; box-shadow: 0 1px 3px black;">ADVANCE PROGRAMMING PRACTICE</h1>
+
+
+    <div class="names">
+      <h7>By</h7>
+      <br>
+      <h7> 
+        SAISAKTHI</h7><br>
+      
+    </div>
+    <h2 style="background-color: #192a40; color: antiquewhite; border-radius: 8px; box-shadow: 0 1px 3px white;">SIMPLE TODO LIST</h2>
+
+    <input type="text" id="todoInput" placeholder="Enter your todo" />
+    <button onclick="addTodo()">Add Todo</button>
+    <button onclick="deleteFirstTodo()">Delete First</button>
+    <button onclick="deleteLastTodo()">Delete Last</button>
+<br>
+<br>
+    <div id="todo-container"></div>
+
+    <script>
+      let todos = [];
+      let idCounter = 1;
+
+      gsap.to("body", {
+        background: "linear-gradient(120deg, #1e3c72, #2a5298)",
+        duration: 3,
+        repeat: -1,
+        yoyo: true,
+        ease: "power1.inOut"
+      });
+
+      gsap.registerEffect({
+        name: "fade",
+        effect: (targets, config) => {
+          return gsap.to(targets, {
+            duration: config.duration,
+            opacity: 0,
+            x: 50, 
+            ease: "power1.inOut"
+          });
+        },
+        defaults: { duration: 0.5 },
+        extendTimeline: true
+      });
+
+      function render() {
+        const container = document.getElementById("todo-container");
+        container.innerHTML = "";
+
+        todos.forEach((todo, index) => {
+          const div = document.createElement("div");
+          div.className = "todo-item";
+          div.setAttribute("id", todo.id);
+
+          const text = document.createElement("div");
+          text.className = "todo-text";
+          text.innerText = todo.title;
+
+          const btn = document.createElement("button");
+          btn.innerText = "Delete";
+          btn.onclick = () => deleteTodoAt(index);
+
+          div.appendChild(text);
+          div.appendChild(btn);
+          container.appendChild(div);
+
+          gsap.to(div, {
+            opacity: 1,
+            y: 0,
+            duration: 0.5,
+            ease: "back.out(1.7)"
+          });
+        });
+      }
+
+      function addTodo() {
+        const input = document.getElementById("todoInput");
+        const value = input.value.trim();
+        if (!value) return;
+
+        todos.push({ id: idCounter++, title: value });
+        input.value = "";
+        render();
+      }
+
+      function deleteTodoAt(index) {
+        const el = document.getElementById(String(todos[index].id));
+        if (el) {
+          gsap.effects.fade(el, { duration: 0.5 }).then(() => {
+            todos.splice(index, 1);
+            render();
+          });
+        }
+      }
+
+      function deleteFirstTodo() {
+        if (todos.length > 0) deleteTodoAt(0);
+      }
+
+      function deleteLastTodo() {
+        if (todos.length > 0) deleteTodoAt(todos.length - 1);
+      }
+    </script>
+  </body>
+</html>
